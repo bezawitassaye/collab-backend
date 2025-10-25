@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: my-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: myappdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./src/sql/migrations.sql:/docker-entrypoint-initdb.d/migrations.sql
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    container_name: collab-backend
+    command: npm run dev
+    ports:
+      - "4000:4000"
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres://postgres:1234@postgres:5432/myappdb
+
+volumes:
+  pgdata:
