@@ -13,12 +13,12 @@ services:
       - "5432:5432"
     volumes:
       - ./src/sql/migrations.sql:/docker-entrypoint-initdb.d/migrations.sql
-      - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql  # mount to /var/lib/postgresql, not /data
 
   backend:
     build: .
     container_name: collab-backend
-    command: npm run dev
+    command: npx ts-node src/server.ts   # run ts-node directly
     ports:
       - "4000:4000"
     depends_on:
